@@ -1,22 +1,49 @@
 version: '3'
+
 services:
+  db:
+    image: postgres:alpine
+    container_name: school-messenger-pg 
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: messenger_school_db
+      POSTGRES_USER: root
+    volumes:
+      - pg-db-data:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432
+
+  mongodb:
+    image : mongo
+    container_name: school-messenger-mongo 
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - mongo-db-data:/data/db
+    ports:
+      - 27017:27017
+
   api:
     build:
       context: ./api
     ports:
-      - "5000:5000"
+      - 5000:5000
     container_name: school-messenger-api
     volumes:
-       - ./api:/usr/src/app/api
-       - /usr/src/app/api/node_modules
+      - ./api:/usr/src/app/api
+      - /usr/src/app/api/node_modules
   client:
     build:
       context: ./client
     ports:
-      - "3000:3000"
-      - "3001:3001"
+      - 3000:3000
     container_name: school-messenger-client
     stdin_open: true
     volumes:
-       - ./client:/usr/src/app/client
-       - /usr/src/app/client/node_modules
+      - ./client:/usr/src/app/client
+      - /usr/src/app/client/node_modules
+
+volumes:
+  pg-db-data: {}
+  mongo-db-data: {}

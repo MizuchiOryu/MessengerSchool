@@ -1,0 +1,22 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./api
+    ports:
+      - "5000:5000"
+    container_name: school-messenger-api
+    volumes:
+       - ./api:/usr/src/app/api
+       - /usr/src/app/api/node_modules
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    container_name: school-messenger-client
+    stdin_open: true
+    volumes:
+       - ./client:/usr/src/app/client
+       - /usr/src/app/client/node_modules

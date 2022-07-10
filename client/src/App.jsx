@@ -1,45 +1,33 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React from 'react'
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Container from 'react-bootstrap/Container';
 
+import Chat from './components/Chat';
+
+export default () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Navbar id='nav' bg="dark" variant="dark">
+          <Container>
+            <Link className='navbar-brand' to='/'>MsMessenger</Link>
+            <Nav className="me-auto">
+              <Link className='nav-link' to="/profile">Profil</Link>
+              <Link className='nav-link' to="/logout">Déconnexion</Link>
+            </Nav>
+          </Container>
+        </Navbar>
+        <div id='main'>
+          <Routes> 
+            <Route exact path="/" element={<Chat />} />
+            <Route exact path="/profile" element={<></>} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </>
   )
 }
 
-export default App

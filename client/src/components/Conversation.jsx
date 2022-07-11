@@ -24,22 +24,24 @@ export default function Conversation() {
   const fetchMessages = () => {
     if (conversation) {
       setMessages(conversation.messages)
-
-      const _socket = io(
-        env.VITE_API_URL,
-        {
-          query: {
-            id: conversation.id,
-          },
-          reconnection: false,
-          transports: ['websocket', 'polling', 'flashsocket']
-        },
-      );
-      setSocket(_socket);
-
-      return () => newSocket.close();
     };
   };
+
+  useEffect(()=> {
+    const _socket = io(
+      env.VITE_API_URL,
+      {
+        query: {
+          user: 'user_id',
+          conversation: 'conversation_id',
+        },
+        reconnection: false,
+        transports: ['websocket', 'polling', 'flashsocket']
+      },
+    );
+    setSocket(_socket);
+    return () => _socket.close();
+  }, [])
 
   useEffect(() => {
     fetchMessages();
@@ -48,8 +50,8 @@ export default function Conversation() {
   function sendMessage(e) {
     e.preventDefault();
     const message = {
-      friendshipId: conversation.friendshipId,
-      sender: null,
+      user: 'user_id',
+      conversation: 'friendship_id',
       text: messageInput.current.value,
     };
     socket.emit('send-message', message);
@@ -59,9 +61,7 @@ export default function Conversation() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('receive-message', () => {
-        fetchMessages();
-      });
+      socket.on('receive-message', () => fetchMessages());
     }
   }, [socket]);
 

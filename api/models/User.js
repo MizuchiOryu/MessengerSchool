@@ -62,6 +62,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isEdited: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
   {
     sequelize,

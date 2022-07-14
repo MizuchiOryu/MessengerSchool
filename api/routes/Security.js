@@ -96,7 +96,7 @@ router.get("/verify", async (req, res) => {
       return;
     }
     if (user.recent_token !== token) {
-      res.status(401);
+      res.sendStatus(401);
       return ;
     }
     const result = await user.set({active:true}).save()
@@ -158,7 +158,7 @@ router.get("/reset-password", async (req, res) => {
       return;
     }
     if (user.recent_token !== token) {
-      res.status(401);
+      res.sendStatus(401);
       return ;
     }
     return res.json({ "acces":true });
@@ -194,7 +194,7 @@ router.patch("/reset-password", async (req, res) => {
       return;
     }
     if (user.recent_token !== token) {
-      res.status(401);
+      res.sendStatus(401);
       return ;
     }
     user.recent_token = null

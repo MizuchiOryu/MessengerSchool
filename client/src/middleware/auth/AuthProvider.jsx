@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
       login(email,password)
         .then(({data})=>{
           sessionStorage.setItem("token", data?.token);
-          navigate('/');
+          resolve(true)
         })
         .catch((error)=>{
           reject(error)
@@ -28,7 +28,7 @@ const AuthProvider = ({ children }) => {
 
   const handleLogout = useCallback((event) => {
     event.preventDefault();
-    setToken(null);
+    sessionStorage.removeItem("token");
     navigate("/login")
   },[])
 

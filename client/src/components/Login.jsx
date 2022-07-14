@@ -23,11 +23,15 @@ const Login = () => {
     });
     const [isLoading,setLoading] = useState(false);
     const [errorApiStatus, setErrorApiStatus] = useState({});
-
+    
     const onSubmit = useCallback((data)=>{
         const {email,password} = data 
         setLoading(true);
+        setErrorApiStatus({});
         onLogin(email,password)
+          .then(()=>{
+            location.href = "/"
+          })
           .catch(({response:{data}})=>{
             const {message} = data
             setErrorApiStatus(

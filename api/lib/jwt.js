@@ -1,31 +1,72 @@
 const jwt = require("jsonwebtoken");
 
-exports.createToken = (user) => {
+exports.createToken = async (user) => {
   const payload = {
     id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    bio: user.bio,
-    email: user.email,
+    firstname: user.firstname,
     isAdmin: user.isAdmin,
+    email: user.email,
+  };
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+};
+
+exports.checkToken = async (token) => {
+  try {
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    return {
+      id: decoded.id,
+      firstname: decoded.firstname,
+      isAdmin: decoded.isAdmin,
+      email:decoded.email
+    };
+  } catch (error) {
+    return false;
+  }
+};
+
+exports.checkTokenForVerify = async (token) => {
+  try {
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    return {
+      email: decoded.email,
+    };
+  } catch (error) {
+    return false;
+  }
+};
+
+
+exports.createTokenForVerifyToken = async (user) => {
+
+  const payload = {
+    email: user.email
   };
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 };
 
-exports.checkToken = (token) => {
+
+exports.checkTokenResetPassword = async (token) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     return {
       id: decoded.id,
-      firstName: decoded.firstName,
-      lastName: decoded.lastName,
-      bio: decoded.bio,
-      email: decoded.email,
-      isAdmin: decoded.isAdmin,
     };
   } catch (error) {
     return false;
   }
+};
+
+
+exports.createTokenForResetPassword= async (user) => {
+
+  const payload = {
+    id: user.id
+  };
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
 };

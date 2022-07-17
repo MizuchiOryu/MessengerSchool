@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
     return res.sendStatus(401);
   }
 
-  const user = checkToken(token);
+  const user = await checkToken(token);
   if (user) {
     req.user = await User.findByPk(user.id);
     next();

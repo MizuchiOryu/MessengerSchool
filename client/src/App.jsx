@@ -1,10 +1,9 @@
-import React, { Suspense,lazy, useEffect } from 'react'
+import React, { Suspense,lazy, useEffect, useState } from 'react'
 import { Link, Route, Routes } from "react-router-dom";
 
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-import Button from 'react-bootstrap/Button';
 import ProtectedRoute from "./hooks/protected";
 import useAuth from "./hooks/auth";
 
@@ -17,9 +16,20 @@ const Verify = lazy(() => import("./components/Verify"));
 const ResetPasswordRequest = lazy(() => import("./components/ResetPasswordRequest"));
 const ResetPasswordConfirm = lazy(() => import("./components/ResetPasswordConfirm"));
 
+import { me } from './api/auth';
+import Profile from './components/Profile';
 
 const App = () => {
-  const { token, onLogout } = useAuth();
+  const { token } = useAuth();
+  const [user, setUser] = useState({})
+
+  useEffect(() => {  
+    me().then(({data}) => {
+      setUser(data)
+    }).catch((e) => {
+      console.error(e)
+    })
+  }, [])
 
   return (
     <>
@@ -27,11 +37,9 @@ const App = () => {
         <Container>
           <Link className='navbar-brand' to='/'>MsMessenger</Link>
           <Nav className="me-auto">
-            
             {token && (
               <>
-                <Link className='nav-link' to="/profile">Profil</Link>
-                <Button variant="primary" onClick={onLogout} >Déconnexion</Button>
+                <Link className='nav-link' to="/profile">{user.firstName}</Link>
               </>
             )}
             {!token && (
@@ -52,22 +60,22 @@ const App = () => {
             <Route path="/reset-password-request/" element={<ResetPasswordRequest />} />
             <Route path="/reset-password-confirm/" element={<ResetPasswordConfirm />} />
             <Route exact path="/" 
-                element={
-                  <ProtectedRoute>
-                    <Chat/>
-                  </ProtectedRoute>
-                }
-              />
+              element={
+                <ProtectedRoute>
+                  <Chat/>
+                </ProtectedRoute>
+              }
+            />
             <Route exact path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <></>
-                  </ProtectedRoute>
-                }
-              />
+              element={
+                <ProtectedRoute>
+                  <Profile/>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Suspense>
-        
+
       </div>
     </>
   )

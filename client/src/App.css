@@ -9,3 +9,11 @@
 #main {
   height: calc(100vh - 50px);
 }
+
+h2 {
+  font-size: 18px;
+}
+
+p, span, button {
+  font-size: 12px !important;
+}

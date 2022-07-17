@@ -12,13 +12,13 @@ const initMessengerSocket = require("./routes/Message");
 const homeRouter = require("./routes/Home");
 
 // app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.VITE_CLIENT_URL }));
 
 app.use(express.json());
 
 app.use(SecurityRouter);
 app.use("/home", homeRouter);
 app.use("/friendships",friendshipRouter);
-app.use(cors({ credentials: true, origin: 'http://client:3000' }));
 
 initMessengerSocket(server);
 

@@ -5,7 +5,8 @@ const bcryptjs = require("bcryptjs");
 const { createToken ,checkTokenForVerify,createTokenForResetPassword,checkTokenResetPassword} = require("../lib/jwt");
 const router = new Router();
 
-const {sendEmailVerifyAccount,sendEmailConfirmResetPassword,sendEmailGetResetPassword} = require("../lib/mailer")
+const {sendEmailVerifyAccount,sendEmailConfirmResetPassword,sendEmailGetResetPassword} = require("../lib/mailer");
+const checkAuth = require("../middlewares/checkAuth");
 
 const formatError = (validationError) => {
   return validationError.errors.reduce((acc, error) => {
@@ -14,11 +15,15 @@ const formatError = (validationError) => {
   }, {});
 };
 
+router.get('/me', checkAuth, async (req, res) => {
+  return res.json(req.user)
+})
+
 router.post("/register", async (req, res) => {
   try {
     let result = await User.create({...req.body,active:false,isAdmin:false,recent_token:null,isEdited:false});
     let {dataValues} = result
-    
+
     await sendEmailVerifyAccount(dataValues)
     res.status(201).json(dataValues);
   } catch (error) {

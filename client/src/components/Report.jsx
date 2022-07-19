@@ -7,33 +7,42 @@ import Alert from 'react-bootstrap/Alert';
 import { useForm, Controller } from "react-hook-form";
 import { Form } from "react-bootstrap";
 import useAuth from "../hooks/auth";
+import { register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 
 
-const Login = () => {
+const Register = () => {
 
-  const { token, onLogin } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   const { handleSubmit, control, reset, formState: { errors } } = useForm({
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
+      lastName: "",
+      firstName: "",
     }
   });
   const [isLoading, setLoading] = useState(false);
   const [errorApiStatus, setErrorApiStatus] = useState({});
+  const [SuccessApiStatus, setSuccessApiStatus] = useState(false);
 
   const onSubmit = useCallback((data) => {
-    const { email, password } = data
+    const { email, password, firstName, lastName } = data
     setLoading(true);
+    setSuccessApiStatus(false);
     setErrorApiStatus({});
-    onLogin(email, password)
-      .then(() => {
-        location.href = "/"
+
+    register(email, password, firstName, lastName)
+      .then((data) => {
+        setSuccessApiStatus(true)
       })
       .catch(({ response: { data } }) => {
-        const { message } = data
+        let message = ""
+        Object.keys(data).map((element) => {
+          message += `${data[element]} \n`
+        })
         setErrorApiStatus(
           {
             "message": message,
@@ -62,8 +71,67 @@ const Login = () => {
             </Alert>
           )
         }
+        {
+          SuccessApiStatus && (
+            <Alert key="success" variant="success">
+              Votre compte a bien étais crée vous allez recevoir un email de confirmation
+            </Alert>
+          )
+        }
         <Form autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
           <Row className="mt-3">
+            <Form.Group controlId="validationFirstName">
+              <Form.Label>FirstName</Form.Label>
+              <Controller
+                name="firstName"
+                control={control}
+                rules={{
+                  required: true,
+                  minLength: {
+                    value: 1,
+                    message: "Please insert your first name"
+                  }
+                }}
+                render={({ field }) =>
+                  <Form.Control
+                    {...field}
+                    type="text"
+                    readOnly={isLoading}
+                  />
+                }
+              />
+              {errors.firstName && (
+                <Form.Text>
+                  {errors.firstName.message}
+                </Form.Text>
+              )}
+            </Form.Group>
+            <Form.Group controlId="validationLastName">
+              <Form.Label>lastName</Form.Label>
+              <Controller
+                name="lastName"
+                control={control}
+                rules={{
+                  required: true,
+                  minLength: {
+                    value: 1,
+                    message: "Please insert your lastName"
+                  }
+                }}
+                render={({ field }) =>
+                  <Form.Control
+                    {...field}
+                    type="text"
+                    readOnly={isLoading}
+                  />
+                }
+              />
+              {errors.lastName && (
+                <Form.Text>
+                  {errors.lastName.message}
+                </Form.Text>
+              )}
+            </Form.Group>
             <Form.Group controlId="validationEmail">
               <Form.Label>Email</Form.Label>
               <Controller
@@ -128,14 +196,14 @@ const Login = () => {
                   role="status"
                   aria-hidden="true"
                 />
-              ) : ("Login")
+              ) : ("Register")
             }
           </Button>
           <br />
           {
             !isLoading && (
               <>
-                <Card.Link href="/register">Register</Card.Link>
+                <Card.Link href="/login">Login</Card.Link>
                 <Card.Link href="/reset-password-request">Reset Password</Card.Link>
               </>
 
@@ -148,4 +216,4 @@ const Login = () => {
 
   );
 }
-export default Login;
+export default Register;

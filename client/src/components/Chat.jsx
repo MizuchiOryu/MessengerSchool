@@ -1,19 +1,18 @@
-import React from "react";
-
+import React, { useEffect, useState} from "react";
 import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
 
+import {useParams} from 'react-router-dom';
 import Conversation from "./Conversation";
 
 import { ConversationProvider } from "../contexts/ConversationContext";
 
 export default () => {
+  const {friendshipId} = useParams()
 
   return (
-    <Container fluid className="d-flex h-100">
-      <ConversationProvider>
-          <Conversation/>
+    <Container fluid className="d-flex h-100 px-0">
+      <ConversationProvider friendshipId={friendshipId} >
+        <Conversation/>
       </ConversationProvider>
     </Container>
   )

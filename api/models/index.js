@@ -18,3 +18,11 @@ exports.User.hasMany(exports.Friendship, {
   },
   onDelete: 'CASCADE',
 });
+
+exports.User.hasOne(exports.Message, {
+  foreignKey: {
+    name: 'owner',
+    allowNull: false,
+  },
+  onDelete: 'CASCADE',
+});

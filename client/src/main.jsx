@@ -12,13 +12,11 @@ import AuthProvider from "./middleware/auth/AuthProvider"
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <EnvProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </EnvProvider>
-  </React.StrictMode>
+  <EnvProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </EnvProvider>
 )

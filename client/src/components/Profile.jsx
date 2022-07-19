@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
+import { Link } from 'react-router-dom';
 import useAuth from '../hooks/auth';
 
 import Button from 'react-bootstrap/Button';
@@ -91,15 +92,20 @@ export default () => {
       <input type='text' ref={inputRef}></input>
       <Button onClick={sendRequest}>Ajouter</Button>
 
-      <h2 className='mt-3' >Mes amis</h2>
+      <h2 className='mt-3'>Mes amis</h2>
       <ul>
         { friends.map(f => (
           <li key={f.friendship}>
             <div className='d-flex align-items-center'>
               <span className="me-2">{`${f.friend.firstName} ${f.friend.lastName}`}</span>
+              <Button>
+                <Link className='text-white' to={`/chat/${f.friendship}`}>Discuter</Link>
+              </Button>
               <Button
+                className='ms-2'
                 variant='danger'
-                onClick={() => OnDeleteFriend(f.friend.id)}>Supprimer</Button>
+                onClick={() => OnDeleteFriend(f.friend.id)}>Supprimer
+              </Button>
             </div>
           </li>)
         ) }

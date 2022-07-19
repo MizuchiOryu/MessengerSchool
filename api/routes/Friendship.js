@@ -1,7 +1,9 @@
 const { Router } = require("express");
 const { Op } = require('sequelize')
 const checkAuth = require('../middlewares/checkAuth');
-const { Friendship, User} = require("../models");
+const { Friendship, Message, User} = require("../models");
+
+const {findUser} = require('../utils')
 
 const router = new Router();
 
@@ -24,9 +26,9 @@ router.get("/", checkAuth, async (req, res) => {
       let friend;
 
       if (friendship._user != req.user.id){
-        friend = await User.findByPk(friendship._user)
+        friend = await findUser(friendship._user)
       }else {
-        friend = await User.findByPk(friendship.friend)
+        friend = await findUser(friendship.friend)
       }
 
       return {
@@ -37,9 +39,11 @@ router.get("/", checkAuth, async (req, res) => {
 
     res.json(friends);
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 });
+
 
 // get all sent invites
 router.get("/pending", checkAuth, async (req, res) => {
@@ -57,9 +61,9 @@ router.get("/pending", checkAuth, async (req, res) => {
       let friend;
 
       if (friendship._user != req.user.id){
-        friend = await User.findByPk(friendship._user)
+        friend = await findUser(friendship._user)
       }else {
-        friend = await User.findByPk(friendship.friend)
+        friend = await findUser(friendship.friend)
       }
 
       return {
@@ -74,7 +78,6 @@ router.get("/pending", checkAuth, async (req, res) => {
     res.sendStatus(500);
   }
 });
-
 
 // get all received invites
 router.get("/invites", checkAuth, async (req, res) => {
@@ -92,9 +95,9 @@ router.get("/invites", checkAuth, async (req, res) => {
       let friend;
 
       if (friendship._user != req.user.id){
-        friend = await User.findByPk(friendship._user)
+        friend = await findUser(friendship._user)
       }else {
-        friend = await User.findByPk(friendship.friend)
+        friend = await findUser(friendship.friend)
       }
 
       return {
@@ -110,12 +113,39 @@ router.get("/invites", checkAuth, async (req, res) => {
   }
 });
 
+// get friendship information
+router.get("/:id", checkAuth, async (req, res) => {
+  try {
+
+    const { id: userId } = req.user
+    const friendship = await Friendship.findByPk(req.params.id);
+
+    if(![friendship._user, friendship.friend].includes(userId)){
+      return res.sendStatus(403)
+    }
+
+    if (userId === friendship._user) {
+      friendship._user = await findUser(userId)
+      friendship.friend = await findUser(friendship.friend)
+    } else {
+      friendship.friend = await findUser(friendship._user)
+      friendship._user = await findUser(userId)
+    }
+
+    res.json(friendship);
+  } catch (error) {
+    console.error(error)
+    res.sendStatus(500);
+  }
+});
+
+
 // send an invitation to someone
 router.post("/", checkAuth, async (req, res) => {
   try {
 
     const { friendId } = req.body
-    const friendToAdd = await User.findByPk(friendId)
+    const friendToAdd = await findUser(friendId)
 
 
     if (!friendToAdd){
@@ -169,7 +199,7 @@ router.put('/:id', checkAuth, async (req, res) => {
       res.json(result);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.sendStatus(500)
   }
 })
@@ -216,5 +246,65 @@ router.delete("/:id", checkAuth, async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+// get conv messages
+router.get("/:friendshipId/messages", checkAuth, async (req, res) => {
+  try {
+    const friendship = await Friendship.findOne(
+      {
+        where: {
+          id: req.params.friendshipId,
+          [Op.or]: [
+            { _user : req.user.id },
+            { friend: req.user.id }
+          ],
+        }
+      }
+    );
+
+    if(!friendship){
+      return res.sendStatus(404)
+    }
+
+    const messages = await Message.findAll(
+      {
+        where: {
+          friendship: req.params.friendshipId
+        },
+        order : [
+          ['createdAt']
+        ]
+      }
+    )
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+router.delete('/messages/:id', checkAuth, async (req, res) => {
+  try {
+    const {id} = req.params
+    const [nbLines, [result]] = await Message.update(
+      {isDeleted : true},
+      {
+        where: {
+          id,
+          owner: req.user.id
+        },
+        returning: true,
+      });
+    if (!nbLines) {
+      res.sendStatus(404);
+    } else {
+      res.json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500)
+  }
+})
 
 module.exports = router;

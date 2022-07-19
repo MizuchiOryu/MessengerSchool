@@ -2,31 +2,28 @@ import axios from 'axios'
 
 const URL = import.meta.env.VITE_API_URL
 
-export function getConversation(friendshipId){
-  return new Promise((resolve) => 
-    setTimeout(() => {
-      resolve(
-        {
-          messages: []
-        }
-      )
-    }, 1500)
-  );
-  // return axios.get()
+export function getFriendship(friendshipId){
+  const headers = __headers(true)
+  return axios.get(URL + '/friendships/' + friendshipId, { headers })
+}
+
+export function getMessages(friendshipId){
+  const headers = __headers(true)
+  return axios.get(URL + '/friendships/' + friendshipId + '/messages', { headers })
 }
 
 export function getFriends() {
-const headers = __headers(true)
+  const headers = __headers(true)
   return axios.get(URL + '/friendships', { headers })
 }
 
 export function getPendingInvites() {
-const headers = __headers(true)
+  const headers = __headers(true)
   return axios.get(URL + '/friendships/pending', { headers })
 }
 
 export function getInvites() {
-const headers = __headers(true)
+  const headers = __headers(true)
   return axios.get(URL + '/friendships/invites', { headers })
 }
 

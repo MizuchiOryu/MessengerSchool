@@ -1,14 +1,14 @@
 import React, { Suspense,lazy, useEffect, useState } from 'react'
-import { Link, Route, Routes } from "react-router-dom";
+import { Navigate, Link, Route, Routes } from "react-router-dom";
 
+import Loader from './components/Loader';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import ProtectedRoute from "./hooks/protected";
 import useAuth from "./hooks/auth";
+import Error404 from './components/Error404'
 
-
-const Loader = lazy(() => import("./components/Loader"));
 const Chat = lazy(() => import("./components/Chat"));
 const Login = lazy(() => import("./components/Login"));
 const Register = lazy(() => import("./components/Register"));
@@ -24,11 +24,13 @@ const App = () => {
   const [user, setUser] = useState({})
 
   useEffect(() => {  
-    me().then(({data}) => {
-      setUser(data)
-    }).catch((e) => {
-      console.error(e)
-    })
+    if(token){
+      me().then(({data}) => {
+        setUser(data)
+      }).catch((e) => {
+        console.error(e)
+      })
+    }
   }, [])
 
   return (
@@ -54,12 +56,13 @@ const App = () => {
       <div id='main'>
         <Suspense fallback={<Loader/>}>
           <Routes>
+            <Route path="/" element={<Navigate to="/profile" />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} />
             <Route path="/verify/" element={<Verify />} />
             <Route path="/reset-password-request/" element={<ResetPasswordRequest />} />
             <Route path="/reset-password-confirm/" element={<ResetPasswordConfirm />} />
-            <Route exact path="/" 
+            <Route exact path="/chat/:friendshipId" 
               element={
                 <ProtectedRoute>
                   <Chat/>
@@ -73,9 +76,9 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<Error404/>} />
           </Routes>
         </Suspense>
-
       </div>
     </>
   )

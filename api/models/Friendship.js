@@ -20,7 +20,7 @@ Friendship.init(
 
 Friendship.hasMany(Message, {
   foreignKey: {
-    name: 'friendshipId',
+    name: 'friendship',
     allowNull: false,
   },
   onDelete: 'CASCADE',

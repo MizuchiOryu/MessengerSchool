@@ -1,5 +1,12 @@
-#root {
-  height: 100vh;
+body {
+  margin: 0;
+  /* height: 100vh; */
+  /* background-color: #2D3035; */
+}
+
+#root{
+	height: 100vh;
+	max-height: 100vh;
 }
 
 #nav {
@@ -15,5 +22,102 @@ h2 {
 }
 
 p, span, button {
-  font-size: 12px !important;
+  font-size: 14px !important;
+}
+
+.bg-1{
+	background-color: #2D3035;
+	color: white;
+}
+
+.bg-2{
+background-color: #3B3C41;
+	color: white;
+
+}
+
+.bg-3{
+	background-color: #1F2229;
+	color: white;
+
+}
+.bg-4{
+	background: linear-gradient(#424348, #2d3035);
+	color: white;
+}
+
+.p-15{
+	padding: 0 15%;
+}
+
+.wt{
+	color: white;
+}
+
+.ring{
+	border-radius: 50%;
+	background-color: #3B3C41;
+}
+.ring > img {
+	padding: 2px;
+}
+
+
+#modal-header button > span{
+	color: white;
+}
+
+h1 {
+	font-size: 1.5rem;
+}
+
+p{
+	margin:0;
+}
+
+.scroll{
+	overflow-y: scroll;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.scroll::-webkit-scrollbar {
+	display: none;
+	overflow-y: scroll;
+}
+  
+.chat-container {
+	overflow-y: scroll;
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+}
+
+.no-tiny {
+	width: 1vw;
+	min-width: 55px;
+}
+
+.no-stretch{
+	max-width: 70%;
+}
+
+.bubble{
+	border-radius: 15px;
+	display: inline-block;
+}
+
+.square{
+	border-radius: 0;
+}
+
+.dborder{
+	border: solid 3px red;
+}
+
+.circle{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 40px;
+	height: 40px;
 }

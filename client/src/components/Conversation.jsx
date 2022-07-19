@@ -3,8 +3,6 @@ import React, { useEffect, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 import { useConversation } from '../contexts/ConversationContext';
 
@@ -14,7 +12,7 @@ export default function Conversation() {
   const messageInput = useRef();
   const conversationEnd = useRef();
 
-  const { friendship, messages, sendMessage } = useConversation();
+  const { friendship, messages, sendMessage, deleteMessage } = useConversation();
 
   const friend = friendship?.friend
 
@@ -43,33 +41,34 @@ export default function Conversation() {
               if (m.owner === friendship._user.id) {
                 return (
                   <div className="d-flex align-items-center justify-content-end mb-1 " key={m.id}>
-                    <OverlayTrigger
-                      placement="right"
-                      delay={{ show: 50, hide: 0 }}
-                      overlay={(
-                        <Tooltip id="button-tooltip">
-                          {m.createdAt.time}
-                        </Tooltip>
-                      )}
-                    >
-                      <p className="text-white bubble bg-primary py-1 px-2 no-stretch">{m.text}</p>
-                    </OverlayTrigger>
+                    { m.isDeleted ? 
+                        (
+                          <p className="text-white bubble bg-primary py-1 px-2 no-stretch">
+                            <i>Ce message a été supprimé</i>
+                          </p>
+                        ) : 
+                        (
+                          <p 
+                            className="text-white bubble bg-primary py-1 px-2 no-stretch"
+                            onClick={() => deleteMessage(m.id)}
+                          >{m.text}</p>
+                        )
+                    }
                   </div>
                 );
               }
               return (
                 <div className="d-flex align-items-center justify-content-start mb-1" key={m.id}>
-                  <OverlayTrigger
-                    placement="left"
-                    delay={{ show: 50, hide: 0 }}
-                    overlay={(
-                      <Tooltip id="button-tooltip">
-                        {m.createdAt.time}
-                      </Tooltip>
-                    )}
-                  >
-                    <p className="text-white bubble bg-secondary py-1 px-2 no-stretch">{m.text}</p>
-                  </OverlayTrigger>
+                  { m.isDeleted 
+                    ? (
+                        <p className="text-white bubble bg-secondary py-1 px-2 no-stretch">
+                          <i>Ce message a été supprimé</i>
+                        </p>
+                      )
+                      : (
+                        <p className="text-white bubble bg-secondary py-1 px-2 no-stretch">{m.text}</p>
+                      )
+                  }
                 </div>
               );
             })

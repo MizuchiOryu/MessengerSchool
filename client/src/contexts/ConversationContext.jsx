@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { getFriendship, getMessages } from "../api";
+import { getFriendship, getMessages, removeMessage } from "../api";
 
 import { useEnv } from './EnvContext';
 import io from 'socket.io-client'
@@ -62,8 +62,15 @@ export function ConversationProvider({ friendshipId, children }) {
     loadMessages();
   }
 
+  const deleteMessage = (messageId) => {
+    removeMessage(messageId)
+      .then(() => loadMessages())
+      .catch(e => {debugger}) 
+  }
+
   return (
-    <ConversationContext.Provider value={{ friendship, messages, sendMessage }}>
+    <ConversationContext.Provider 
+      value={{ friendship, messages, sendMessage, deleteMessage }}>
       {children}
     </ConversationContext.Provider>
   );

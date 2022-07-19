@@ -106,12 +106,12 @@ p{
 	display: inline-block;
 }
 
-.square{
-	border-radius: 0;
+.editedMsg {
+ font-size: 10px !important;
 }
 
-.dborder{
-	border: solid 3px red;
+.square{
+	border-radius: 0;
 }
 
 .circle{

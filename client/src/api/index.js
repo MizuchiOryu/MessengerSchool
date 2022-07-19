@@ -12,6 +12,11 @@ export function getMessages(friendshipId){
   return axios.get(URL + '/friendships/' + friendshipId + '/messages', { headers })
 }
 
+export function removeMessage(messageId){
+  const headers = __headers(true)
+  return axios.delete(URL + '/friendships/messages/' + messageId, { headers })
+}
+
 export function getFriends() {
   const headers = __headers(true)
   return axios.get(URL + '/friendships', { headers })

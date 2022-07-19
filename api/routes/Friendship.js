@@ -116,7 +116,7 @@ router.get("/invites", checkAuth, async (req, res) => {
 // get friendship information
 router.get("/:id", checkAuth, async (req, res) => {
   try {
-    
+
     const { id: userId } = req.user
     const friendship = await Friendship.findByPk(req.params.id);
 
@@ -270,7 +270,10 @@ router.get("/:friendshipId/messages", checkAuth, async (req, res) => {
       {
         where: {
           friendship: req.params.friendshipId
-        }
+        },
+        order : [
+          ['createdAt']
+        ]
       }
     )
 
@@ -280,5 +283,28 @@ router.get("/:friendshipId/messages", checkAuth, async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+router.delete('/messages/:id', checkAuth, async (req, res) => {
+  try {
+    const {id} = req.params
+    const [nbLines, [result]] = await Message.update(
+      {isDeleted : true},
+      {
+        where: {
+          id,
+          owner: req.user.id
+        },
+        returning: true,
+      });
+    if (!nbLines) {
+      res.sendStatus(404);
+    } else {
+      res.json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500)
+  }
+})
 
 module.exports = router;

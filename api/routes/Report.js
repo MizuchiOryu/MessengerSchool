@@ -54,13 +54,19 @@ router.post("/ban/:id", checkAuth, async (req, res) => {
         const result = await User.update(
             {
                 active: false,
-            },
-            {
-                where: {
-                    id: req.body.target
-                }
+            }, {
+            where: {
+                id: req.params.id
             }
-        );
+        });
+
+        const bannedUser = await User.update({
+            active: false,
+        }, {
+            where: {
+                id: result.target
+            }
+        });
 
         res.status(201).json(result);
     } catch (error) {
@@ -69,6 +75,31 @@ router.post("/ban/:id", checkAuth, async (req, res) => {
         } else {
             res.sendStatus(500);
         }
+    }
+});
+
+// close report
+router.post("/close/:id", checkAuth, async (req, res) => {
+    try {
+        if (!req.user.isAdmin) {
+            res.sendStatus(403);
+        }
+
+        const nbLines = await Report.update({
+            isClosed: true,
+        }, {
+            where: {
+                id: req.report.id,
+            },
+        });
+
+        if (!nbLines) {
+            res.sendStatus(404);
+        } else {
+            res.sendStatus(204);
+        }
+    } catch (error) {
+        res.sendStatus(500);
     }
 });
 

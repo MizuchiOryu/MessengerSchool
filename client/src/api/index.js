@@ -2,17 +2,17 @@ import axios from 'axios'
 
 const URL = import.meta.env.VITE_API_URL
 
-export function getFriendship(friendshipId){
+export function getFriendship(friendshipId) {
   const headers = __headers(true)
   return axios.get(URL + '/friendships/' + friendshipId, { headers })
 }
 
-export function getMessages(friendshipId){
+export function getMessages(friendshipId) {
   const headers = __headers(true)
   return axios.get(URL + '/friendships/' + friendshipId + '/messages', { headers })
 }
 
-export function removeMessage(messageId){
+export function removeMessage(messageId) {
   const headers = __headers(true)
   return axios.delete(URL + '/friendships/messages/' + messageId, { headers })
 }
@@ -67,6 +67,18 @@ export function removeReportFriend(friendId) {
   const headers = __headers(true)
 
   return axios.delete(URL + '/reports/' + friendId, { headers })
+}
+
+export function banReportedUser(reportId) {
+  const headers = __headers(true)
+
+  return axios.post(URL + '/ban/' + reportId, { headers })
+}
+
+export function closeReport(reportId) {
+  const headers = __headers(true)
+
+  return axios.post(URL + '/close/' + reportId, { headers })
 }
 
 export function __health(baseUrl) {

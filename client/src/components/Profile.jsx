@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/auth';
-
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { acceptInvite, cancelInvite, deleteFriend, getFriends, getInvites, getPendingInvites, sendFriendRequest } from '../api'; import { Badge, Col, Row } from 'react-bootstrap';
+import {
+  acceptInvite, cancelInvite, deleteFriend, getFriends, getInvites, getPendingInvites,
+  sendFriendRequest, getReports, removeReportFriend, reportFriend
+} from '../api';
+import { Badge, Col, Row, Form, Button } from 'react-bootstrap';
 
 import InviteCard from './InviteCard'
 
@@ -111,20 +112,22 @@ export default () => {
 
   const OnReportFriendForm = (friend) => {
     setReportForm(
-      <Form onSubmit={OnReportFriend} className="sticky-top">
-        <div className='d-flex justify-content-between'>
-          <h1>Signalement de {`${f.friend.firstName} ${f.friend.lastName}`}</h1>
-          <Button variant="secondary" onClick={(e) => { e.stopPropagation(); setReportForm(false) }}>Fermer</Button>
-        </div>
-        <Form.Control name="selectedFriend" type="hidden" value={friend.id} />
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Raison du signalement</Form.Label>
-          <Form.Control as="textarea" rows="3" name="reason" />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Signaler
-        </Button>
-      </Form>
+      <Card className="sticky-top">
+        <Form onSubmit={OnReportFriend}>
+          <div className='d-flex justify-content-between'>
+            <h1>Signalement de {`${f.friend.firstName} ${f.friend.lastName}`}</h1>
+            <Button variant="secondary" onClick={(e) => { e.stopPropagation(); setReportForm(false) }}>Fermer</Button>
+          </div>
+          <Form.Control name="selectedFriend" type="hidden" value={friend.id} />
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>Raison du signalement</Form.Label>
+            <Form.Control as="textarea" rows="3" name="reason" />
+          </Form.Group>
+          <Button variant="primary" type="submit">
+            Signaler
+          </Button>
+        </Form>
+      </Card>
     )
   };
 

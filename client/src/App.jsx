@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import ProtectedRoute from "./hooks/protected";
 import useAuth from "./hooks/auth";
 import Error404 from './components/Error404'
+import AdminLogs from './components/AdminLogs'
 
 const Chat = lazy(() => import("./components/Chat"));
 const Login = lazy(() => import("./components/Login"));
@@ -40,9 +41,10 @@ const App = () => {
           <Link className='navbar-brand' to='/'>MsMessenger</Link>
           <Nav className="me-auto">
             {token && (
-              <>
+              <React.Fragment>
                 <Link className='nav-link' to="/profile">{user.firstName}</Link>
-              </>
+                {user.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
+              </React.Fragment>
             )}
             {!token && (
               <>
@@ -67,20 +69,24 @@ const App = () => {
                 <ProtectedRoute>
                   <Chat/>
                 </ProtectedRoute>
-              }
-            />
+              }/>
             <Route exact path="/profile" 
               element={
                 <ProtectedRoute>
                   <Profile/>
                 </ProtectedRoute>
-              }
-            />
+              }/>
+            <Route exact path="/logs" 
+              element={
+                <ProtectedRoute>
+                  <AdminLogs/>
+                </ProtectedRoute>
+              }/>
             <Route path="*" element={<Error404/>} />
-          </Routes>
-        </Suspense>
-      </div>
-    </>
+            </Routes>
+          </Suspense>
+        </div>
+      </>
   )
 }
 

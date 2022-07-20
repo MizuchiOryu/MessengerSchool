@@ -2,12 +2,13 @@ const { Router } = require("express");
 const checkAuth = require('../middlewares/checkAuth');
 const Log  = require("../schemas/Log");
 
-const logger = require("../lib/logger")
+const logger = require("../lib/logger");
+const checkAdmin = require("../middlewares/checkAdmin");
 
 const router = new Router();
 
 // get logs metrics
-router.get("/", checkAuth, async (req, res) => {
+router.get("/", checkAuth, checkAdmin, async (_, res) => {
   try {
     const logsMetrics = await Log.aggregate([
       {

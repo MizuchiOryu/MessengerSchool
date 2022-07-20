@@ -8,6 +8,8 @@ const router = new Router();
 const {sendEmailVerifyAccount,sendEmailConfirmResetPassword,sendEmailGetResetPassword} = require("../lib/mailer");
 const checkAuth = require("../middlewares/checkAuth");
 
+const logger = require('../lib/logger')
+
 const formatError = (validationError) => {
   return validationError.errors.reduce((acc, error) => {
     acc[error.path] = error.message;
@@ -30,8 +32,8 @@ router.post("/register", async (req, res) => {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
+      logger.error(error);
       res.sendStatus(500);
-      console.error(error);
     }
   }
 });
@@ -44,20 +46,21 @@ router.post("/login", async (req, res) => {
       },
     });
     if (!result) {
-      console.error("Email not found")
+      logger.error("Email not found")
       res.status(401).json({
         message: "Email or Password is incorrect",
       });
       return;
     }
     if (!(await bcryptjs.compare(req.body.password, result.password))) {
-      console.error("Password is incorrect")
+      logger.error("Password is incorrect")
       res.status(401).json({
         message: "Email or Password is incorrect",
       });
       return;
     }
     if(!result.active){
+      logger.error("Account not active")
       res.status(401).json({
         message: "Your account is not active",
       });
@@ -66,6 +69,7 @@ router.post("/login", async (req, res) => {
     if(result.recent_token && result.isEdited){
       const verifyToken = await checkTokenResetPassword(result.recent_token);
       if(verifyToken){
+      logger.error("Password reset uncompleted")
         res.status(401).json({
           message: "You have requested a password change please finish this step before logging in",
         });
@@ -77,7 +81,7 @@ router.post("/login", async (req, res) => {
     res.json({ token });
   } catch (error) {
     res.sendStatus(500);
-    console.error(error);
+    logger.error(error);
   }
 });
 
@@ -87,7 +91,7 @@ router.get("/verify", async (req, res) => {
     if(!token) throw new Error("not token");
     const verifyToken = await checkTokenForVerify(token);
     if (!verifyToken) {
-      console.error("Token is expired")
+      logger.error("Token is expired")
       res.sendStatus(500);
     }
     const user = await User.findOne({
@@ -110,7 +114,7 @@ router.get("/verify", async (req, res) => {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
-      console.error(error);
+      logger.error(error);
       res.sendStatus(500);
     }
   }
@@ -138,7 +142,7 @@ router.post("/reset-password", async (req, res) => {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
-      console.error(error);
+      logger.error(error);
       res.sendStatus(500);
     }
   }
@@ -171,7 +175,7 @@ router.get("/reset-password", async (req, res) => {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
-      console.error(error);
+      logger.error(error);
       res.sendStatus(500);
     }
   }
@@ -212,7 +216,7 @@ router.patch("/reset-password", async (req, res) => {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
-      console.error(error);
+      logger.error(error);
       res.sendStatus(500);
     }
   }

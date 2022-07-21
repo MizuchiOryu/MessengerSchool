@@ -80,4 +80,17 @@ router.patch("/banned",checkAuth ,async (req, res) => {
   }
 });
 
+router.put('/edit', (req, res) => {
+    Op.User.update({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        bio: req.body.bio,
+        email: req.body.email,
+        password: req.body.password
+    }, {
+        where: { id: req.body.id }
+    }
+    ).then(() => res.send("success"))
+});
+
 module.exports = router;

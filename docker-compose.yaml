@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     image: postgres:alpine
-    container_name: school-messenger-pg 
+    container_name: school-messenger-pg
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: messenger_school_db
@@ -14,8 +14,8 @@ services:
       - 5432:5432
 
   mongodb:
-    image : mongo
-    container_name: school-messenger-mongo 
+    image: mongo
+    container_name: school-messenger-mongo
     environment:
       - PUID=1000
       - PGID=1000
@@ -28,7 +28,7 @@ services:
     build:
       context: ./api
     ports:
-      - 5000:5000
+      - 5001:5000
     container_name: school-messenger-api
     volumes:
       - ./api:/usr/src/app/api

@@ -4,6 +4,7 @@ const checkAuth = require('../middlewares/checkAuth');
 const { Friendship, Message, User} = require("../models");
 
 const {findUser} = require('../utils')
+const logger = require('../lib/logger')
 
 const router = new Router();
 
@@ -39,7 +40,7 @@ router.get("/", checkAuth, async (req, res) => {
 
     res.json(friends);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.sendStatus(500);
   }
 });
@@ -74,7 +75,7 @@ router.get("/pending", checkAuth, async (req, res) => {
 
     res.json(friends);
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -108,7 +109,7 @@ router.get("/invites", checkAuth, async (req, res) => {
 
     res.json(friends);
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -134,7 +135,7 @@ router.get("/:id", checkAuth, async (req, res) => {
 
     res.json(friendship);
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -176,7 +177,7 @@ router.post("/", checkAuth, async (req, res) => {
     });
     res.status(201).json(result);
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -199,7 +200,7 @@ router.put('/:id', checkAuth, async (req, res) => {
       res.json(result);
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.sendStatus(500)
   }
 })
@@ -220,7 +221,7 @@ router.delete("/invites/:id", checkAuth, async (req, res) => {
       res.sendStatus(204);
     }
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -242,7 +243,7 @@ router.delete("/:id", checkAuth, async (req, res) => {
       res.sendStatus(204);
     }
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     res.sendStatus(500);
   }
 });
@@ -279,7 +280,7 @@ router.get("/:friendshipId/messages", checkAuth, async (req, res) => {
 
     res.json(messages);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.sendStatus(500);
   }
 });
@@ -302,7 +303,7 @@ router.delete('/messages/:id', checkAuth, async (req, res) => {
       res.json(result);
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     res.sendStatus(500)
   }
 })

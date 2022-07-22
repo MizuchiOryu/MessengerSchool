@@ -56,6 +56,11 @@ export function __health(baseUrl) {
   return axios.get(baseUrl + '/health')
 }
 
+export function getAdminLogs() {
+  const headers = __headers(true)
+  return axios.get(URL + '/logs', { headers })
+}
+
 export function __headers(token = false) {
   const headers = {
     'Content-Type': 'application/json',

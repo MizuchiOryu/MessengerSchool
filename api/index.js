@@ -25,7 +25,7 @@ app.use("/logs", loggerRouter);
 
 initMessengerSocket(server);
 
-const port = process.env.APP_PORT;
+const port = process.env.PORT;
 server.listen(port, () => logger.info(`Server started on port ${port}`));
 
 

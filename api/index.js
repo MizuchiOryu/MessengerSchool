@@ -13,6 +13,8 @@ const friendshipRouter = require("./routes/Friendship");
 const initMessengerSocket = require("./routes/MessageSocket");
 const loggerRouter = require("./routes/Logger");
 const reportRouter = require("./routes/Report");
+const userRouter = require("./routes/User");
+
 app.use(morgan('tiny'))
 // app.use(cors());
 app.use(cors({ credentials: true, origin: process.env.VITE_CLIENT_URL }));
@@ -23,6 +25,7 @@ app.use(SecurityRouter);
 app.use("/friendships",friendshipRouter);
 app.use("/logs", loggerRouter);
 app.use("/reports", reportRouter);
+app.use("/user", userRouter);
 
 initMessengerSocket(server);
 

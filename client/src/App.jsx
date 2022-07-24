@@ -16,6 +16,7 @@ const Register = lazy(() => import("./components/Register"));
 const Verify = lazy(() => import("./components/Verify"));
 const ResetPasswordRequest = lazy(() => import("./components/ResetPasswordRequest"));
 const ResetPasswordConfirm = lazy(() => import("./components/ResetPasswordConfirm"));
+const Moderation = lazy(() => import("./components/Moderation"));
 
 import { me } from './api/auth';
 import Profile from './components/Profile';
@@ -44,6 +45,7 @@ const App = () => {
               <React.Fragment>
                 <Link className='nav-link' to="/profile">{user.firstName}</Link>
                 {user.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
+                {user.isAdmin && (<Link className='nav-link' to="/moderation">Moderation</Link>)}
               </React.Fragment>
             )}
             {!token && (
@@ -80,6 +82,12 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <AdminLogs/>
+                </ProtectedRoute>
+              }/>
+            <Route exact path="/moderation"
+              element={
+                <ProtectedRoute>
+                  <Moderation/>
                 </ProtectedRoute>
               }/>
             <Route path="*" element={<Error404/>} />

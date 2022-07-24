@@ -249,9 +249,6 @@ export default () => {
                                 <Controller
                                     name="isAdmin"
                                     control={control}
-                                    rules={{
-                                        required: true,
-                                    }}
                                     render={({ field }) => 
                                         <Form.Check
                                             {...field}

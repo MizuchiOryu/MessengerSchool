@@ -5,6 +5,7 @@ const {sendEmailCreateAccount,sendEmailBannedAccount} = require("../lib/mailer")
 const checkAuth = require("../middlewares/checkAuth");
 const logger = require('../lib/logger')
 const {findUser} = require('../utils')
+const Profile = require('../models/Subject');
 
 
 const router = new Router();
@@ -80,15 +81,15 @@ router.patch("/banned",checkAuth ,async (req, res) => {
   }
 });
 
-router.put('/edit', (req, res) => {
-    Op.User.update({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        bio: req.body.bio,
-        email: req.body.email,
-        password: req.body.password
+router.put('/edit/:id', (req, res) => {
+    User.update({
+        firstname: req.user.firstname,
+        lastname: req.user.lastname,
+        bio: req.user.bio,
+        email: req.user.email,
+        password: req.user.password
     }, {
-        where: { id: req.body.id }
+        where: { id: req.user.id }
     }
     ).then(() => res.send("success"))
 });

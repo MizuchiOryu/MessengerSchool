@@ -1,4 +1,4 @@
-const { Router, Router } = require("express");
+const { Router } = require("express");
 const Profile = require('../models/Subject');
 const { Op } = require('sequelize');
 const checkAuth = require('../middlewares/checkAuth');
@@ -7,15 +7,15 @@ const User = require('../models/User');
 const router = new Router();
 
 
-router.put('/edit', (req, res) => {
-    Op.User.update({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        bio: req.body.bio,
-        email: req.body.email,
-        password: req.body.password
+router.put('/edit/:id', (req, res) => {
+    User.update({
+        firstname: req.user.firstname,
+        lastname: req.user.lastname,
+        bio: req.user.bio,
+        email: req.user.email,
+        password: req.user.password
     }, {
-        where: { id: req.body.id }
+        where: { id: req.user.id }
     }
     ).then(() => res.send("success"))
 });

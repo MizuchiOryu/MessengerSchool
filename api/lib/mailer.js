@@ -9,6 +9,30 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+exports.sendEmailEditAccount = async (user) => {
+
+  let message = {
+    from: process.env.MAILER_FROM_ADDRESS,
+    to: user?.email,
+    subject: "Modification de votre profil",
+    html:`
+          <h1>Bonjour ${user.lastName} ${user.firstName},</h1>
+          <p>Vous venez d'effectué des modifications par rapport a votre profil<p>
+        `
+  }
+
+  transporter.sendMail(
+    message,
+    (err,info) => {
+      if (err) {
+        console.error(err)
+      } else {
+        console.log(info);
+      }
+    }
+  )
+}
+
 exports.sendEmailVerifyAccount = async (user) => {
 
   let link = process.env.VITE_CLIENT_URL + "/verify/?token=" + user.recent_token;

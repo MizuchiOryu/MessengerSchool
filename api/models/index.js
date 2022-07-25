@@ -3,6 +3,7 @@ exports.Friendship = require("./Friendship");
 exports.Message = require("./Message");
 exports.User = require("./User");
 exports.Report = require("./Report");
+exports.Subject = require("./Subject");
 
 exports.User.hasMany(exports.Friendship, {
   foreignKey: {

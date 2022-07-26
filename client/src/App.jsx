@@ -17,22 +17,10 @@ const Verify = lazy(() => import("./components/Verify"));
 const ResetPasswordRequest = lazy(() => import("./components/ResetPasswordRequest"));
 const ResetPasswordConfirm = lazy(() => import("./components/ResetPasswordConfirm"));
 
-import { me } from './api/auth';
 import Profile from './components/Profile';
 
 const App = () => {
-  const { token } = useAuth();
-  const [user, setUser] = useState({})
-
-  useEffect(() => {
-    if (token) {
-      me().then(({ data }) => {
-        setUser(data)
-      }).catch((e) => {
-        console.error(e)
-      })
-    }
-  }, [])
+  const { token,user } = useAuth();
 
   return (
     <>
@@ -42,8 +30,8 @@ const App = () => {
           <Nav className="me-auto">
             {token && (
               <React.Fragment>
-                <Link className='nav-link' to="/profile">{user.firstName}</Link>
-                {user.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
+                <Link className='nav-link' to="/profile">{user?.firstName}</Link>
+                {user?.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
               </React.Fragment>
             )}
             {!token && (

@@ -1,17 +1,32 @@
 import React,{useEffect,createContext,useCallback,useState} from 'react'
 import { useNavigate,useLocation } from "react-router-dom";
-import {login } from '../../api/auth'
+import {login,me } from '../../api/auth'
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
 
-  const [token, setToken] = React.useState(()=>{
-    return sessionStorage.getItem("token") ?? null
-  });
-
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [user, setUser] = React.useState({});
+  
+  const refreshUser = useCallback(() => {
+    me().then(({ data }) => {
+      setUser(data)
+    }).catch((e) => {
+      console.error(e)
+      navigate("/login")
+    })
+  },[]);
+  
+  const [token, setToken] = React.useState(()=>{
+    let u = sessionStorage.getItem("token") ?? null
+    if(u) setUser(refreshUser())
+    return u
+  });
+
+
 
   const handleLogin = useCallback((email,password) => {
     return new Promise((resolve, reject) => {
@@ -32,10 +47,14 @@ const AuthProvider = ({ children }) => {
     navigate("/login")
   },[])
 
+
+
   const value = {
     token,
+    user,
     onLogin: handleLogin,
     onLogout: handleLogout,
+    onRefreshUser:refreshUser
   };
 
   return (

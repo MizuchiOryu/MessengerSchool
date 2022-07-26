@@ -40,7 +40,6 @@ export default () => {
 
   return (
     <React.Fragment>
-      <h2 className='mt-3' >Reports</h2>
       {error &&
         (
           <div>
@@ -53,15 +52,16 @@ export default () => {
           <React.Fragment>
             <Card className="Auth-form-container">
               <Card.Header>
+                <h2 className='mt-3' >Rapports</h2>
               </Card.Header>
               <Card.Body>
                 <Table striped bordered hover>
                   <thead>
                     <tr>
-                      <th>Reporter</th>
-                      <th>Target</th>
-                      <th>isClosed</th>
-                      <th>Report date</th>
+                      <th>Rapporteur</th>
+                      <th>Cible</th>
+                      <th>Est clot</th>
+                      <th>Créé le</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -97,7 +97,6 @@ export default () => {
             </Card>
           </React.Fragment>
       }
-
 
     </React.Fragment >
   )

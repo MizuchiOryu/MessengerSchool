@@ -65,7 +65,7 @@ const Login = () => {
         <Form autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
           <Row className="mt-3">
             <Form.Group controlId="validationEmail">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>Adresse mail</Form.Label>
               <Controller
                 name="email"
                 control={control}
@@ -73,7 +73,7 @@ const Login = () => {
                   required: true,
                   pattern: {
                     value: /\S+@\S+\.\S+/,
-                    message: "Entered value does not match email format"
+                    message: "Veuillez renseigner une adresse email valide"
                   }
                 }}
                 render={({ field }) =>
@@ -91,7 +91,7 @@ const Login = () => {
               )}
             </Form.Group>
             <Form.Group controlId="validationPassword">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Mot de passe</Form.Label>
               <Controller
                 name="password"
                 control={control}
@@ -99,7 +99,7 @@ const Login = () => {
                   required: true,
                   minLength: {
                     value: 6,
-                    message: "password min length is 6"
+                    message: "Le mot de passe doit contenir au moins 6 caractères"
                   }
                 }}
                 render={({ field }) =>
@@ -128,15 +128,15 @@ const Login = () => {
                   role="status"
                   aria-hidden="true"
                 />
-              ) : ("Login")
+              ) : ("Se connecter")
             }
           </Button>
           <br />
           {
             !isLoading && (
               <>
-                <Card.Link href="/register">Register</Card.Link>
-                <Card.Link href="/reset-password-request">Reset Password</Card.Link>
+                <Card.Link href="/register">S'inscrire</Card.Link>
+                <Card.Link href="/reset-password-request">Réinitialiser le mot de passe</Card.Link>
               </>
 
             )

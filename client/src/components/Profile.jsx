@@ -108,7 +108,7 @@ export default () => {
 
       <h2 className='mt-3'>Mes amis</h2>
       <ul>
-        {friends.map(f => (
+        {friends.map(f => !f.friend.isBanned && (
           <li key={f.friendship}>
             <div className='d-flex align-items-center'>
               <span className="me-2">{`${f.friend.firstName} ${f.friend.lastName}`}</span>

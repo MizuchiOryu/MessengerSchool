@@ -78,6 +78,7 @@ export default () => {
             })
             .finally(() => {
                 setFormIsSubmit(false);
+                loadUsers();
             });
     }, [])
 
@@ -94,7 +95,7 @@ export default () => {
 
     return (
         <React.Fragment>
-            <h2 className='mt-3' >Moderation</h2>
+            <h2 className='mt-3' >Modération</h2>
             {error &&
                 (
                     <div>
@@ -108,8 +109,9 @@ export default () => {
                         <Card className="Auth-form-container">
                             <Card.Header>
                                 <Button variant="primary" onClick={handleShowModal}>
-                                    New User
+                                    <span className="me-2">+</span>Nouvel utilisateur
                                 </Button>
+                                <h2 className='mt-3'>Utilisateurs</h2>
                             </Card.Header>
                             <Card.Body>
                                 {
@@ -122,18 +124,19 @@ export default () => {
                                 {
                                     !true && (
                                         <Alert key="success" variant="success">
-                                            Le compte a bien étais crée
+                                            Le compte a bien été créé
                                         </Alert>
                                     )
                                 }
                                 <Table striped bordered hover>
                                     <thead>
                                         <tr>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>isAdmin</th>
-                                            <th>isBanned</th>
-                                            <th>Option</th>
+                                            <th>Prénom</th>
+                                            <th>Nom</th>
+                                            <th>Actif</th>
+                                            <th>Admin</th>
+                                            <th>Banni</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -145,16 +148,23 @@ export default () => {
                                                         <td>{u.lastName}</td>
                                                         <td>
                                                             {
-                                                                u.isAdmin ? <Badge bg="success">True</Badge> : <Badge bg="danger">False</Badge>
+                                                                u.active ? <Badge bg="light">✅</Badge> : <Badge bg="light">❌</Badge>
                                                             }
                                                         </td>
                                                         <td>
                                                             {
-                                                                u.isBanned ? <Badge bg="success">True</Badge> : <Badge bg="danger">False</Badge>
+                                                                u.isAdmin ? <Badge bg="light">✅</Badge> : <Badge bg="light">❌</Badge>
                                                             }
                                                         </td>
                                                         <td>
-                                                            <Button variant="danger" onClick={() => onBannedUser(u.id)}>X</Button>
+                                                            {
+                                                                u.isBanned ? <Badge bg="light">✅</Badge> : <Badge bg="light">❌</Badge>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {!u.isBanned && (
+                                                                <Button variant="danger" onClick={() => onBannedUser(u.id)}>Bannir</Button>
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 )
@@ -167,13 +177,13 @@ export default () => {
 
                         <Modal show={showModal} onHide={handleCloseModal}>
                             <Modal.Header closeButton>
-                                <Modal.Title>New user</Modal.Title>
+                                <Modal.Title>Nouvel utilisateur</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <Form autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
                                     <Row className="mt-3">
                                         <Form.Group controlId="validationFirstName">
-                                            <Form.Label>FirstName</Form.Label>
+                                            <Form.Label>Prénom</Form.Label>
                                             <Controller
                                                 name="firstName"
                                                 control={control}
@@ -181,7 +191,7 @@ export default () => {
                                                     required: true,
                                                     minLength: {
                                                         value: 1,
-                                                        message: "Please insert your first name"
+                                                        message: "Renseignez un prénom"
                                                     }
                                                 }}
                                                 render={({ field }) =>
@@ -199,7 +209,7 @@ export default () => {
                                             )}
                                         </Form.Group>
                                         <Form.Group controlId="validationLastName">
-                                            <Form.Label>lastName</Form.Label>
+                                            <Form.Label>Nom</Form.Label>
                                             <Controller
                                                 name="lastName"
                                                 control={control}
@@ -207,7 +217,7 @@ export default () => {
                                                     required: true,
                                                     minLength: {
                                                         value: 1,
-                                                        message: "Please insert your lastName"
+                                                        message: "Renseignez un nom"
                                                     }
                                                 }}
                                                 render={({ field }) =>
@@ -225,7 +235,7 @@ export default () => {
                                             )}
                                         </Form.Group>
                                         <Form.Group controlId="validationEmail">
-                                            <Form.Label>Email</Form.Label>
+                                            <Form.Label>Adresse mail</Form.Label>
                                             <Controller
                                                 name="email"
                                                 control={control}
@@ -233,7 +243,7 @@ export default () => {
                                                     required: true,
                                                     pattern: {
                                                         value: /\S+@\S+\.\S+/,
-                                                        message: "Entered value does not match email format"
+                                                        message: "Renseignez une adresse mail valide"
                                                     }
                                                 }}
                                                 render={({ field }) =>
@@ -251,7 +261,7 @@ export default () => {
                                             )}
                                         </Form.Group>
                                         <Form.Group controlId="validationisAdmin">
-                                            <Form.Label>isAdmin</Form.Label>
+                                            <Form.Label>Admin</Form.Label>
                                             <Controller
                                                 name="isAdmin"
                                                 control={control}
@@ -259,7 +269,7 @@ export default () => {
                                                     <Form.Check
                                                         {...field}
                                                         type="checkbox"
-                                                        label="User is Admin ?"
+                                                        label="L'utilisateur est admin ?"
                                                         readOnly={FormIsSubmit}
                                                     />
                                                 }
@@ -282,7 +292,7 @@ export default () => {
                                                     role="status"
                                                     aria-hidden="true"
                                                 />
-                                            ) : ("Create")
+                                            ) : ("Créer")
                                         }
                                     </Button>
                                 </Form>

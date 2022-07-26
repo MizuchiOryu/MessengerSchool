@@ -18,22 +18,10 @@ const ResetPasswordRequest = lazy(() => import("./components/ResetPasswordReques
 const ResetPasswordConfirm = lazy(() => import("./components/ResetPasswordConfirm"));
 const Moderation = lazy(() => import("./components/Moderation"));
 
-import { me } from './api/auth';
 import Profile from './components/Profile';
 
 const App = () => {
-  const { token } = useAuth();
-  const [user, setUser] = useState({})
-
-  useEffect(() => {
-    if (token) {
-      me().then(({ data }) => {
-        setUser(data)
-      }).catch((e) => {
-        console.error(e)
-      })
-    }
-  }, [])
+  const { token,user } = useAuth();
 
   return (
     <>

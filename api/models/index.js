@@ -44,3 +44,15 @@ exports.User.hasMany(exports.Report, {
   },
   onDelete: 'CASCADE',
 });
+
+exports.User.belongsToMany(exports.Subject, {
+  through: "user_tag",
+  as: "tags",
+  foreignKey: "user_id",
+});
+
+exports.Subject.belongsToMany(exports.User, {
+  through: "user_tag",
+  as: "users",
+  foreignKey: "subject_id",
+});

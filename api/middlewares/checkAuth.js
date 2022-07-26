@@ -15,7 +15,22 @@ module.exports = async (req, res, next) => {
 
   const user = await checkToken(token);
   if (user) {
-    req.user = await User.findByPk(user.id,{include:Subject});
+    req.user = await User.findByPk(user.id,
+      {
+        where: {
+          active:true,
+          recent_token:token
+          // isBanned:false,
+          // isEdited:false
+        },
+        include: [
+          {
+            model: Subject,
+            as: "tags",
+          },
+        ]
+      }
+    );
     next();
   } else {
     res.sendStatus(401);

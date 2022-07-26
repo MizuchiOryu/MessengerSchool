@@ -3,25 +3,34 @@ const Report = require("../models/Report");
 const User = require("../models/User");
 const { Op } = require('sequelize')
 const checkAuth = require('../middlewares/checkAuth')
+const logger = require('../lib/logger')
+const checkAdmin = require("../middlewares/checkAdmin");
+const { findUser } = require('../utils')
 
 const router = new Router();
 
 // get all reports
 router.get("/", checkAuth, async (req, res) => {
     try {
-        if (req.user.isAdmin) {
-            const result = await Report.findAll();
-        } else {
-            const result = await Report.findAll(
-                {
-                    where: {
-                        reporter: req.user.id
-                    },
-                });
-        }
+        const where = req.user.isAdmin ? {} : { reporter: req.user.id };
 
-        res.json(result);
+        const result = await Report.findAll(where);
+
+        const reports = await Promise.all(result.map(async (report) => {
+
+            const reporter = await findUser(report.reporter)
+            const target = await findUser(report.target)
+
+            return {
+                ...report.dataValues,
+                reporter,
+                target
+            }
+        }))
+
+        res.json(reports);
     } catch (error) {
+        console.log(error);
         res.sendStatus(500);
     }
 });
@@ -30,66 +39,53 @@ router.get("/", checkAuth, async (req, res) => {
 router.post("/", checkAuth, async (req, res) => {
     try {
         const result = await Report.create({
-            reporter: req.user,
+            reporter: req.user.id,
             target: req.body.target,
-            reason: req.body.reason,
         });
         res.status(201).json(result);
     } catch (error) {
-        if (error instanceof ValidationError) {
-            res.status(422).json(formatError(error));
-        } else {
-            res.sendStatus(500);
-        }
+        logger.error(error)
+        res.sendStatus(500);
     }
 });
 
 // ban user
-router.post("/ban/:id", checkAuth, async (req, res) => {
+router.post("/:id/ban", checkAuth, checkAdmin, async (req, res) => {
     try {
-        if (!req.user.isAdmin) {
-            res.sendStatus(403);
-        }
+        const report = await Report.findByPk(req.params.id);
 
-        const result = await User.update(
-            {
-                active: false,
-            }, {
-            where: {
-                id: req.params.id
-            }
-        });
-
-        const bannedUser = await User.update({
-            active: false,
+        await User.update({
+            isBanned: true,
         }, {
             where: {
-                id: result.target
+                id: report.target
             }
         });
 
-        res.status(201).json(result);
+        await Report.update({
+            isClosed: true
+        }, {
+            where: {
+                target: report.target
+            }
+        });
+
+        res.sendStatus(204);
     } catch (error) {
-        if (error instanceof ValidationError) {
-            res.status(422).json(formatError(error));
-        } else {
-            res.sendStatus(500);
-        }
+        logger.error(error);
+        res.sendStatus(500);
+
     }
 });
 
 // close report
-router.post("/close/:id", checkAuth, async (req, res) => {
+router.post("/:id/close", checkAuth, checkAdmin, async (req, res) => {
     try {
-        if (!req.user.isAdmin) {
-            res.sendStatus(403);
-        }
-
         const nbLines = await Report.update({
             isClosed: true,
         }, {
             where: {
-                id: req.report.id,
+                id: req.params.id,
             },
         });
 
@@ -99,6 +95,7 @@ router.post("/close/:id", checkAuth, async (req, res) => {
             res.sendStatus(204);
         }
     } catch (error) {
+        logger.error(error)
         res.sendStatus(500);
     }
 });

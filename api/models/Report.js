@@ -11,10 +11,6 @@ Report.init(
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4
         },
-        reason: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         isClosed: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

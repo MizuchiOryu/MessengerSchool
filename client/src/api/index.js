@@ -57,28 +57,22 @@ export function getReports() {
   return axios.get(URL + '/reports', { headers })
 }
 
-export function reportFriend(friendId, reason) {
+export function reportFriend(target) {
   const headers = __headers(true)
 
-  return axios.post(URL + '/reports/', { friendId, reason }, { headers })
-}
-
-export function removeReportFriend(friendId) {
-  const headers = __headers(true)
-
-  return axios.delete(URL + '/reports/' + friendId, { headers })
+  return axios.post(URL + '/reports/', { target }, { headers })
 }
 
 export function banReportedUser(reportId) {
   const headers = __headers(true)
 
-  return axios.post(URL + '/ban/' + reportId, { headers })
+  return axios.post(`${URL}/reports/${reportId}/ban`, {}, { headers })
 }
 
 export function closeReport(reportId) {
   const headers = __headers(true)
 
-  return axios.post(URL + '/close/' + reportId, { headers })
+  return axios.post(`${URL}/reports/${reportId}/close`, {}, { headers })
 }
 
 export function __health(baseUrl) {

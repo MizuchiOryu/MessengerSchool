@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useAuth from '../hooks/auth';
 import {
   acceptInvite, cancelInvite, deleteFriend, getFriends, getInvites, getPendingInvites,
-  sendFriendRequest, getReports, removeReportFriend, reportFriend
+  sendFriendRequest, getReports, reportFriend
 } from '../api';
 import { Badge, Col, Row, Form, Button } from 'react-bootstrap';
 
@@ -19,7 +19,6 @@ export default () => {
   const [pendingInvites, setPendingInvites] = useState([])
   const [invites, setInvites] = useState([])
   const [reports, setReports] = useState([])
-  const [reportForm, setReportForm] = useState(false)
 
 
   const loadFriends = () => {
@@ -47,12 +46,6 @@ export default () => {
 
   useEffect(() => {
     loadData()
-  }, [])
-
-  //Set active form to show
-  useCallback((e) => {
-    e.preventDefault();
-    setActiveForm(e.target.id)
   }, [])
 
 
@@ -95,43 +88,11 @@ export default () => {
       .finally(() => loadData())
   }
 
-  const OnReportFriend = (data) => {
-    const { selectedFriend, reason } = data;
-    reportFriend(selectedFriend, reason)
-      .then(({ data }) => { })
+  const OnReportFriend = (target) => {
+    reportFriend(target)
       .catch((e) => { debugger })
       .finally(() => loadData())
   }
-
-  const OnRemoveReportFriend = (friendId) => {
-    removeReportFriend(friendId)
-      .then(({ data }) => { })
-      .catch((e) => { debugger })
-      .finally(() => loadData())
-  }
-
-  const OnReportFriendForm = (friend) => {
-    setReportForm(
-      <Card className="sticky-top">
-        <Form onSubmit={OnReportFriend}>
-          <div className='d-flex justify-content-between'>
-            <h1>Signalement de {`${f.friend.firstName} ${f.friend.lastName}`}</h1>
-            <Button variant="secondary" onClick={(e) => { e.stopPropagation(); setReportForm(false) }}>Fermer</Button>
-          </div>
-          <Form.Control name="selectedFriend" type="hidden" value={friend.id} />
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Raison du signalement</Form.Label>
-            <Form.Control as="textarea" rows="3" name="reason" />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Signaler
-          </Button>
-        </Form>
-      </Card>
-    )
-  };
-
-
   return (
     <React.Fragment>
       <h2 className='mt-3' >Ajouter un ami</h2>
@@ -160,18 +121,14 @@ export default () => {
                 onClick={() => OnDeleteFriend(f.friend.id)}>Supprimer</Button>
 
               {
-                reports.find(r => r.target === f.friend.id)
-                  ? (<Button variant='warning' onClick={() => OnReportFriendForm(f.friend)}>Signaler</Button>)
-
-                  : (<Button variant='success' onClick={() => OnRemoveReportFriend(f.friend)}>Annuler le signalement</Button>)
+                !reports.find(r => r.target.id === f.friend.id)
+                && (<Button className='ms-2' variant='warning' onClick={() => OnReportFriend(f.friend.id)}>Signaler</Button>)
               }
 
             </div>
           </li>)
         )}
       </ul>
-
-      {reportForm}
 
       <h2>Mes invitations</h2>
       <Row>

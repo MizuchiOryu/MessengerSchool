@@ -1,4 +1,4 @@
-import React, { Suspense,lazy, useEffect, useState } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { Navigate, Link, Route, Routes } from "react-router-dom";
 
 import Loader from './components/Loader';
@@ -25,9 +25,9 @@ const App = () => {
   const { token } = useAuth();
   const [user, setUser] = useState({})
 
-  useEffect(() => {  
-    if(token){
-      me().then(({data}) => {
+  useEffect(() => {
+    if (token) {
+      me().then(({ data }) => {
         setUser(data)
       }).catch((e) => {
         console.error(e)
@@ -58,7 +58,7 @@ const App = () => {
         </Container>
       </Navbar>
       <div id='main'>
-        <Suspense fallback={<Loader/>}>
+        <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/" element={<Navigate to="/profile" />} />
             <Route exact path="/login" element={<Login />} />
@@ -66,35 +66,35 @@ const App = () => {
             <Route path="/verify/" element={<Verify />} />
             <Route path="/reset-password-request/" element={<ResetPasswordRequest />} />
             <Route path="/reset-password-confirm/" element={<ResetPasswordConfirm />} />
-            <Route exact path="/chat/:friendshipId" 
+            <Route exact path="/chat/:friendshipId"
               element={
                 <ProtectedRoute>
-                  <Chat/>
+                  <Chat />
                 </ProtectedRoute>
-              }/>
-            <Route exact path="/profile" 
+              } />
+            <Route exact path="/profile"
               element={
                 <ProtectedRoute>
-                  <Profile/>
+                  <Profile />
                 </ProtectedRoute>
-              }/>
-            <Route exact path="/logs" 
+              } />
+            <Route exact path="/logs"
               element={
                 <ProtectedRoute>
-                  <AdminLogs/>
+                  <AdminLogs />
                 </ProtectedRoute>
-              }/>
+              } />
             <Route exact path="/moderation"
               element={
                 <ProtectedRoute>
-                  <Moderation/>
+                  <Moderation />
                 </ProtectedRoute>
-              }/>
-            <Route path="*" element={<Error404/>} />
-            </Routes>
-          </Suspense>
-        </div>
-      </>
+              } />
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+        </Suspense>
+      </div>
+    </>
   )
 }
 

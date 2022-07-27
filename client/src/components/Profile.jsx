@@ -63,8 +63,8 @@ export default () => {
       .finally(()=>{
         setIsLoadingApi(false);
       });
-},[])
-  
+  },[])
+
   const handleEditProfile = useCallback(()=>{
     setIsEdited(true)
   },[])
@@ -125,17 +125,17 @@ export default () => {
       setListTags(data)
       if(data.length > 0) setTagSelected(data[0]?.name)
     }).catch((e)=>{debugger})
-    
+
   }
 
   const loadListUserRecommend = useCallback(()=>{
     let tagsUser = user.tags.map((t)=>(t.name))
     let tagRandom = tagsUser[Math.floor(Math.random()*tagsUser.length)] ?? null
     randomTags(tagRandom)
-    .then(({data}) => {
-      if(data){
-        setListUserRecommend(data)
-      }
+      .then(({data}) => {
+        if(data){
+          setListUserRecommend(data)
+        }
       }).catch((e)=>{debugger})
   },[user])
 
@@ -159,8 +159,8 @@ export default () => {
     if(user?.id){
       let {firstName,lastName,bio} = user
       reset({firstName,lastName,bio})
-      
-     Promise.all(
+
+      Promise.all(
         [
           loadFriends(),
           loadInvites(),
@@ -168,9 +168,9 @@ export default () => {
           loadListTags()
         ]
       ).then(()=>(loadListUserRecommend()))
-      
+
     }
-    
+
   }
 
   useEffect(() => {
@@ -199,12 +199,12 @@ export default () => {
   const quickAdd = (e) => {
     e.preventDefault()
     sendFriendRequest(e.target.value)
-    .then()
-    .catch((e) => {
-      setError(e.response.data)
-    }).finally(() => loadData())
+      .then()
+      .catch((e) => {
+        setError(e.response.data)
+      }).finally(() => loadData())
   }
-  
+
 
   const onAcceptInvite = (friendId) => {
     acceptInvite(friendId)
@@ -262,98 +262,98 @@ export default () => {
                         <Row className="mt-3">
                           <Form.Group controlId="validationFirstName">
                             <Form.Label>FirstName</Form.Label>
-                              <Controller
-                                  name="firstName"
-                                  control={control}
-                                  rules={{
-                                      required: true,
-                                      minLength: {
-                                          value: 1,
-                                          message: "Please insert your first name"
-                                      }
-                                  }}
-                                  render={({ field }) => 
-                                  <Form.Control
-                                      {...field}
-                                      type="text"
-                                      readOnly={isLoadingApi || !isEdited}
-                                  />
+                            <Controller
+                              name="firstName"
+                              control={control}
+                              rules={{
+                                required: true,
+                                minLength: {
+                                  value: 1,
+                                  message: "Please insert your first name"
+                                }
+                              }}
+                              render={({ field }) => 
+                                <Form.Control
+                                  {...field}
+                                  type="text"
+                                  readOnly={isLoadingApi || !isEdited}
+                                />
                               }
-                              />
-                              {errors.firstName && (
-                                  <Form.Text>
-                                    {errors.firstName.message}
-                                  </Form.Text>
-                              )}
+                            />
+                            {errors.firstName && (
+                              <Form.Text>
+                                {errors.firstName.message}
+                              </Form.Text>
+                            )}
                           </Form.Group>
                           <Form.Group controlId="validationLastName">
                             <Form.Label>lastName</Form.Label>
-                              <Controller
-                                  name="lastName"
-                                  control={control}
-                                  rules={{
-                                      required: true,
-                                      minLength: {
-                                          value: 1,
-                                          message: "Please insert your lastName"
-                                      }
-                                  }}
-                                  render={({ field }) => 
-                                  <Form.Control
-                                      {...field}
-                                      type="text"
-                                      readOnly={isLoadingApi || !isEdited}
-                                  />
+                            <Controller
+                              name="lastName"
+                              control={control}
+                              rules={{
+                                required: true,
+                                minLength: {
+                                  value: 1,
+                                  message: "Please insert your lastName"
+                                }
+                              }}
+                              render={({ field }) => 
+                                <Form.Control
+                                  {...field}
+                                  type="text"
+                                  readOnly={isLoadingApi || !isEdited}
+                                />
                               }
-                              />
-                              {errors.lastName && (
-                                  <Form.Text>
-                                    {errors.lastName.message}
-                                  </Form.Text>
-                              )}
+                            />
+                            {errors.lastName && (
+                              <Form.Text>
+                                {errors.lastName.message}
+                              </Form.Text>
+                            )}
                           </Form.Group>
                           <Form.Group controlId="validationBio">
                             <Form.Label>Bio</Form.Label>
-                              <Controller
-                                  name="bio"
-                                  control={control}
-                                  render={({ field }) => 
-                                  <Form.Control
-                                      {...field}
-                                      as="textarea"
-                                      readOnly={isLoadingApi || !isEdited}
-                                  />
+                            <Controller
+                              name="bio"
+                              control={control}
+                              render={({ field }) => 
+                                <Form.Control
+                                  {...field}
+                                  as="textarea"
+                                  readOnly={isLoadingApi || !isEdited}
+                                />
                               }
-                              />
-                              {errors.bio && (
-                                  <Form.Text>
-                                    {errors.bio.message}
-                                  </Form.Text>
-                              )}
+                            />
+                            {errors.bio && (
+                              <Form.Text>
+                                {errors.bio.message}
+                              </Form.Text>
+                            )}
                           </Form.Group>
                         </Row>
                         <br/>
                         {
                           isEdited ?
-                          (
-                            
-                            <>
-                              {
-                                isLoadingApi && 
-                                <Spinner
-                                  as="span"
-                                  animation="border"
-                                  size="sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                />
-                              }
-                              <Button type="submit" variant="success" disabled={isLoadingApi && isEdited} >Modifié</Button>
-                              <Button variant="info" onClick={handleCalcelEditProfile} disabled={isLoadingApi && isEdited} >Cancel les modification</Button>
-                            </>
-                          )
-                          :
-                          <Button variant="info" onClick={handleEditProfile} >Modifier mon profile</Button>
+                            (
+
+                              <>
+                                {
+                                  isLoadingApi && 
+                                    <Spinner
+                                      as="span"
+                                      animation="border"
+                                      size="sm"
+                                      role="status"
+                                      aria-hidden="true"
+                                    />
+                                }
+                                <Button type="submit" variant="success" disabled={isLoadingApi && isEdited} >Modifié</Button>
+                                <Button variant="info" onClick={handleCalcelEditProfile} disabled={isLoadingApi && isEdited} >Cancel les modification</Button>
+                              </>
+                            )
+                            :
+                              <Button variant="info" onClick={handleEditProfile} >Modifier mon profile</Button>
                         }
                       </Form>
                     </Card.Body>
@@ -378,7 +378,7 @@ export default () => {
 
                     <h2 className='mt-3'>Mes amis</h2>
                     <ul>
-                      { friends.map(f => (
+                      { friends.map(f => !f.friend.isBanned && (
                         <li key={f.friendship}>
                           <div className='d-flex align-items-center'>
                             <span className="me-2">{`${f.friend.firstName} ${f.friend.lastName}`}</span>
@@ -386,10 +386,14 @@ export default () => {
                               <Link className='text-white' to={`/chat/${f.friendship}`}>Discuter</Link>
                             </Button>
                             <Button
-                              className='ms-2'
+                              className='ms-1'
                               variant='danger'
                               onClick={() => OnDeleteFriend(f.friend.id)}>Supprimer
                             </Button>
+                            {
+                              !reports.find(r => r.target.id === f.friend.id)
+                                && (<Button className='ms-1' variant='warning' onClick={() => OnReportFriend(f.friend.id)}>Signaler</Button>)
+                            }
                           </div>
                         </li>)
                       ) }
@@ -431,63 +435,63 @@ export default () => {
                     <Card.Body>
                       <Table striped bordered hover>
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Option</th>
-                            </tr>
+                          <tr>
+                            <th>Name</th>
+                            <th>Option</th>
+                          </tr>
                         </thead>
                         <tbody>
-                        {
+                          {
                             user?.tags.map((u)=>{
-                                return (
-                                    <tr key={u.id}>
-                                        <td>{u.name}</td>
-                                        <td> 
-                                            <Button variant="danger" onClick={() => onDeleteTag(u.name)}>X</Button>
-                                        </td>
-                                    </tr>
-                                )
+                              return (
+                                <tr key={u.id}>
+                                  <td>{u.name}</td>
+                                  <td> 
+                                    <Button variant="danger" onClick={() => onDeleteTag(u.name)}>X</Button>
+                                  </td>
+                                </tr>
+                              )
                             })
-                        }
+                          }
                         </tbody>
                       </Table>
                     </Card.Body>
                     <Card.Footer>
                       <InputGroup className="mb-3">
-                          <Form.Select onChange={onChangeTagAdd} value={tagSelected}>
-                            {
-                              listTags.map((t)=>{
-                                return (
-                                  <option key={t.id} value={t.name}>{t.name}</option>
-                                )
-                              })
-                            }
-                          </Form.Select>
-                          <Button variant="danger" onClick={onAddTag} >Add Tag</Button>
-                        </InputGroup> 
+                        <Form.Select onChange={onChangeTagAdd} value={tagSelected}>
+                          {
+                            listTags.map((t)=>{
+                              return (
+                                <option key={t.id} value={t.name}>{t.name}</option>
+                              )
+                            })
+                          }
+                        </Form.Select>
+                        <Button variant="danger" onClick={onAddTag} >Add Tag</Button>
+                      </InputGroup> 
                     </Card.Footer>
                   </Card>
                 </Col>
                 <Col>
-                    <Card>
-                        <Card.Header>Recommandation selon vos tags</Card.Header>
-                        <Card.Body>
-                            <ul>
-                              { listUserRecommend.map(u => (
-                                <li key={u.id}>
-                                  {u.firstName} {u.lastName}
-                                  <Button value={u.id} onClick={quickAdd}>+</Button>
-                                </li>)
-                              ) }
-                            </ul>
-                            </Card.Body>
-                    </Card>
+                  <Card>
+                    <Card.Header>Recommandation selon vos tags</Card.Header>
+                    <Card.Body>
+                      <ul>
+                        { listUserRecommend.map(u => (
+                          <li key={u.id}>
+                            {u.firstName} {u.lastName}
+                            <Button value={u.id} onClick={quickAdd}>+</Button>
+                          </li>)
+                        ) }
+                      </ul>
+                    </Card.Body>
+                  </Card>
                 </Col>
               </Row>  
             </>
           )
         }
-    </Container>
+      </Container>
 
     </React.Fragment>
   )

@@ -1,13 +1,25 @@
 const nodemailer = require('nodemailer');
+const logger = require('./logger')
 
 const transporter = nodemailer.createTransport({
- host: process.env.MAILER_DSN,
+  host: process.env.MAILER_DSN,
   port: process.env.MAILER_PORT,
+  secure: false,
   auth: {
     user: process.env.MAILER_AUTH_USER,
     pass: process.env.MAILER_AUTH_PASSWORD
   }
 });
+
+console.log({
+  host: process.env.MAILER_DSN,
+  port: process.env.MAILER_PORT,
+  secure: false,
+  auth: {
+    user: process.env.MAILER_AUTH_USER,
+    pass: process.env.MAILER_AUTH_PASSWORD
+  }
+})
 
 exports.sendEmailEditAccount = async (user) => {
 

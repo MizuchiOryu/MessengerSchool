@@ -23,20 +23,20 @@ const formatError = (validationError) => {
 const { Friendship } = require("../models");
 const checkAdmin = require("../middlewares/checkAdmin");
 router.patch("/edit",checkAuth, async (req, res) => {
-    try {
-        let {firstName,lastName,bio} = req.body
-        const result = await req.user.set({firstName,lastName,bio}).save()
-        let {dataValues} = result
-        await sendEmailEditAccount(dataValues)
-        res.status(200).json(dataValues);
-    } catch (error) {
-      if (error instanceof ValidationError) {
-        res.status(422).json(formatError(error));
-      } else {
-        logger.error(error);
-        res.sendStatus(500);
-      }
+  try {
+    let {firstName,lastName,bio} = req.body
+    const result = await req.user.set({firstName,lastName,bio}).save()
+    let {dataValues} = result
+    await sendEmailEditAccount(dataValues)
+    res.status(200).json(dataValues);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      res.status(422).json(formatError(error));
+    } else {
+      logger.error(error);
+      res.sendStatus(500);
     }
+  }
 });
 
 router.post("/",checkAuth, checkAdmin ,async (req, res) => {
@@ -99,14 +99,13 @@ router.patch("/banned",checkAuth ,async (req, res) => {
 
 router.get("/tags",checkAuth, async (req, res) => {
   try {
-      const result = await Subject.findAll();
-      res.json(result);
+    const result = await Subject.findAll();
+    res.json(result);
   } catch (error) {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
       logger.error(error);
-      console.log(error)
       res.sendStatus(500);
     }
   }
@@ -114,26 +113,25 @@ router.get("/tags",checkAuth, async (req, res) => {
 
 router.post("/tags",checkAuth, async (req, res) => {
   try {
-      const user = req.user
-      
-      let {tag} = req.body;
-      let tagsUser = user.tags.map((t)=>(t.name))
-      if(tagsUser.includes(tag)) throw new Error("tag already linked to the user")
+    const user = req.user
 
-      const checkTagsExist = await Subject.findOne({
-        where: {
-          name: tag
-        },
-      })
-      const result = await user.addTags(checkTagsExist)
-      await sendEmailEditAccount(user)
-      res.sendStatus(201);
+    let {tag} = req.body;
+    let tagsUser = user.tags.map((t)=>(t.name))
+    if(tagsUser.includes(tag)) throw new Error("tag already linked to the user")
+
+    const checkTagsExist = await Subject.findOne({
+      where: {
+        name: tag
+      },
+    })
+    const result = await user.addTags(checkTagsExist)
+    await sendEmailEditAccount(user)
+    res.sendStatus(201);
   } catch (error) {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
       logger.error(error);
-      console.log(error)
       res.sendStatus(500);
     }
   }
@@ -141,21 +139,20 @@ router.post("/tags",checkAuth, async (req, res) => {
 
 router.delete("/tags",checkAuth, async (req, res) => {
   try {
-      const user = req.user      
-      let {tag} = req.body;
-      let tagsUser = user.tags.map((t)=>(t.name))
-      if(!tagsUser.includes(tag)) throw new Error("tag don't linked to the user")
-      
-      const checkTagsExist = await Subject.findOne({
-        where: {
-          name: tag
-        },
-      })
-      const result = await user.removeTags(checkTagsExist)
-      await sendEmailEditAccount(user)
-      res.sendStatus(202);
+    const user = req.user      
+    let {tag} = req.body;
+    let tagsUser = user.tags.map((t)=>(t.name))
+    if(!tagsUser.includes(tag)) throw new Error("tag don't linked to the user")
+
+    const checkTagsExist = await Subject.findOne({
+      where: {
+        name: tag
+      },
+    })
+    const result = await user.removeTags(checkTagsExist)
+    await sendEmailEditAccount(user)
+    res.sendStatus(202);
   } catch (error) {
-    console.log(error)
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));
     } else {
@@ -167,52 +164,55 @@ router.delete("/tags",checkAuth, async (req, res) => {
 
 router.get("/recommend_tags",checkAuth, async (req, res) => {
   try {
-      let querySequilize = {
-        order: sequelize.random() ,
-        limit:1,
-        include: [
-          {
-            model: User,
-            as: "users",
-            where: {
-              id: {[Op.ne]: req.user.id},
-            }
+    let querySequilize = {
+      order: sequelize.random() ,
+      limit:1,
+      include: [
+        {
+          model: User,
+          as: "users",
+          where: {
+            id: {[Op.ne]: req.user.id}
           }
-        ]
-      }
-      if(req.params.tag){
-        querySequilize["where"] = {name:req.params.tag}
-      }
-      const result = await Subject.findOne(querySequilize);
-      const {users} = result
+        }
+      ]
+    }
+    if(req.params.tag){
+      querySequilize["where"] = {name:req.params.tag}
+    }
+    const result = await Subject.findOne(querySequilize);
+    if (!result)
+      return res.json([])
 
-      const asyncFilter = async (users, predicate) => {
-        const results = await Promise.all(users.map(predicate));
-        return users.filter((_v, index) => results[index]);
-      }
-      
-      const asyncRes = await asyncFilter(users, async (u) => {
-        let isFriend = await Friendship.findOne(
-          {
-            where: {
-              [Op.or]: [
-                  {
-                    _user: req.user.id ,
-                    friend: u.id
-                  },
-                  {
-                    _user: u.id,
-                    friend: req.user.id
-                  },
-              ]
-            }
+    const {users} = result
+
+    const asyncFilter = async (users, predicate) => {
+      const results = await Promise.all(users.map(predicate));
+      return users.filter((_v, index) => results[index]);
+    }
+
+    const asyncRes = await asyncFilter(users, async (u) => {
+      let isFriend = await Friendship.findOne(
+        {
+          where: {
+            [Op.or]: [
+              {
+                _user: req.user.id ,
+                friend: u.id
+              },
+              {
+                _user: u.id,
+                friend: req.user.id
+              },
+            ]
           }
-        )
-        return !!!isFriend
-      });
+        }
+      )
+      return !!!isFriend
+    });
 
-      res.json(asyncRes);
-       
+    res.json(asyncRes);
+
   } catch (error) {
     if (error instanceof ValidationError) {
       res.status(422).json(formatError(error));

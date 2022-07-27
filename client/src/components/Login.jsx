@@ -32,11 +32,13 @@ const Login = () => {
       .then(() => {
         location.href = "/"
       })
-      .catch(e => {
-        const  message = e?.response?.data
-        if (message){
-          setErrorApiStatus({ message });
-        }
+      .catch(({ response: { data } }) => {
+        const { message } = data
+        setErrorApiStatus(
+          {
+            "message": message,
+          }
+        );
       })
       .finally(() => {
         setLoading(false);

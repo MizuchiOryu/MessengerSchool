@@ -1,5 +1,6 @@
 const { checkToken } = require("../lib/jwt");
 const { User } = require("../models");
+const { Subject } = require("../models");
 
 module.exports = async (req, res, next) => {
   const header = req.headers.authorization;
@@ -14,7 +15,25 @@ module.exports = async (req, res, next) => {
 
   const user = await checkToken(token);
   if (user) {
-    req.user = await User.findByPk(user.id);
+    req.user = await User.findByPk(user.id,
+      {
+        where: {
+          active:true,
+          recent_token:token,
+          isBanned:false,
+          isEdited:false
+        },
+        include: [
+          {
+            model: Subject,
+            as: "tags",
+          },
+        ]
+      }
+    );
+
+    if (!req.user) return res.sendStatus(401)
+
     next();
   } else {
     res.sendStatus(401);

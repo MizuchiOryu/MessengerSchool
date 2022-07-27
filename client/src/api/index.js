@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const URL = import.meta.env.VITE_API_URL
+export const URL = import.meta.env.VITE_API_URL
 
 export function getFriendship(friendshipId) {
   const headers = __headers(true)

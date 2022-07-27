@@ -3,6 +3,7 @@ exports.Friendship = require("./Friendship");
 exports.Message = require("./Message");
 exports.User = require("./User");
 exports.Report = require("./Report");
+exports.Subject = require("./Subject");
 
 exports.User.hasMany(exports.Friendship, {
   foreignKey: {
@@ -42,4 +43,16 @@ exports.User.hasMany(exports.Report, {
     allowNull: false,
   },
   onDelete: 'CASCADE',
+});
+
+exports.User.belongsToMany(exports.Subject, {
+  through: "user_tag",
+  as: "tags",
+  foreignKey: "user_id",
+});
+
+exports.Subject.belongsToMany(exports.User, {
+  through: "user_tag",
+  as: "users",
+  foreignKey: "subject_id",
 });

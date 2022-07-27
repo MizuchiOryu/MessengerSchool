@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "https://www.react-bootstrap.github.io"
+    }
+  ]
+}

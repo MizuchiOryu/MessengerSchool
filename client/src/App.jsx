@@ -31,9 +31,9 @@ const App = () => {
           <Nav className="me-auto">
             {token && (
               <React.Fragment>
-                <Link className='nav-link' to="/profile">{user.firstName}</Link>
-                {user.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
-                {user.isAdmin && (<Link className='nav-link' to="/moderation">Moderation</Link>)}
+                <Link className='nav-link' to="/profile">{user?.firstName}</Link>
+                {user?.isAdmin && (<Link className='nav-link' to="/logs">Logs</Link>)}
+                {user?.isAdmin && (<Link className='nav-link' to="/moderation">Moderation</Link>)}
               </React.Fragment>
             )}
             {!token && (

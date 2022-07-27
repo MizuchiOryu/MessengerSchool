@@ -21,18 +21,11 @@ const formatError = (validationError) => {
 };
 
 const { Friendship } = require("../models");
+const checkAdmin = require("../middlewares/checkAdmin");
 router.patch("/edit",checkAuth, async (req, res) => {
     try {
-        const user = await User.findOne({
-          where: {
-            id: req.user.id,
-            active:true,
-            // isBanned:false,
-            // isEdited:false
-          },
-        });
         let {firstName,lastName,bio} = req.body
-        const result = await user.set({firstName,lastName,bio}).save()
+        const result = await req.user.set({firstName,lastName,bio}).save()
         let {dataValues} = result
         await sendEmailEditAccount(dataValues)
         res.status(200).json(dataValues);
@@ -46,11 +39,8 @@ router.patch("/edit",checkAuth, async (req, res) => {
     }
 });
 
-router.post("/",checkAuth ,async (req, res) => {
+router.post("/",checkAuth, checkAdmin ,async (req, res) => {
   try {
-    if(req.body.isAdmin && !req.user.isAdmin){
-      throw new Error("No permission to create this user");
-    }
     let bodyIsAdmin = req.body.isAdmin ?? false;
     let randomPassword = Math.random().toString(36).slice(-8);
     let result = await User.create({...req.body,active:false,isAdmin:bodyIsAdmin,recent_token:null,isEdited:false,password:randomPassword});
@@ -67,11 +57,8 @@ router.post("/",checkAuth ,async (req, res) => {
   }
 });
 
-router.get("/",checkAuth ,async (req, res) => {
+router.get("/",checkAuth , checkAdmin,async (req, res) => {
   try {
-    if(!req.user.isAdmin){
-      throw new Error("No permission to get all user");
-    }
     const result = await User.findAll({
       attributes : {
         exclude : [

@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  host: process.env.MAILER_DSN,
+ host: process.env.MAILER_DSN,
   port: process.env.MAILER_PORT,
   auth: {
     user: process.env.MAILER_AUTH_USER,
@@ -71,6 +71,60 @@ exports.sendEmailConfirmResetPassword = async (user) => {
     html:`
             <h1>Bonjour ${user.lastName} ${user.firstName},</h1>
             <p>La modification de votre mot de passe a bien etais effectué <p>
+        `
+  }
+
+  transporter.sendMail(
+    message,
+    (err,info) => {
+      if (err) {
+        console.error(err)
+      } else {
+        console.log(info);
+      }
+    }
+  )
+}
+
+exports.sendEmailCreateAccount = async (user,randomPassword) => {
+
+  let link = process.env.VITE_CLIENT_URL + "/verify/?token=" + user.recent_token;
+
+  let message = {
+    from: process.env.MAILER_FROM_ADDRESS,
+    to: user?.email,
+    subject: "Account Created by Administrator",
+    html:`
+          <h1>Bonjour ${user.lastName} ${user.firstName},</h1>
+          <p>Voici le lien pour activer votre compte ainsi que ton mot de passe celui ci peut etre reinitialiser apres la confirmation de ton compte<p>
+          <p>${randomPassword}<p>
+          <a href=${link} >Activez mon compte </a>
+        `
+  }
+
+  transporter.sendMail(
+    message,
+    (err,info) => {
+      if (err) {
+        console.error(err)
+      } else {
+        console.log(info);
+      }
+    }
+  )
+}
+
+
+exports.sendEmailBannedAccount = async (user) => {
+
+
+  let message = {
+    from: process.env.MAILER_FROM_ADDRESS,
+    to: user?.email,
+    subject: "Account is Banned",
+    html:`
+          <h1>Bonjour ${user.lastName} ${user.firstName},</h1>
+          <p>Votre vien d'etre banni par un administrateur vous ne pouvais plus acceder a nos outils<p>
         `
   }
 

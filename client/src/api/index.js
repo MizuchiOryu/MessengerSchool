@@ -2,17 +2,17 @@ import axios from 'axios'
 
 const URL = import.meta.env.VITE_API_URL
 
-export function getFriendship(friendshipId){
+export function getFriendship(friendshipId) {
   const headers = __headers(true)
   return axios.get(URL + '/friendships/' + friendshipId, { headers })
 }
 
-export function getMessages(friendshipId){
+export function getMessages(friendshipId) {
   const headers = __headers(true)
   return axios.get(URL + '/friendships/' + friendshipId + '/messages', { headers })
 }
 
-export function removeMessage(messageId){
+export function removeMessage(messageId) {
   const headers = __headers(true)
   return axios.delete(URL + '/friendships/messages/' + messageId, { headers })
 }
@@ -32,24 +32,47 @@ export function getInvites() {
   return axios.get(URL + '/friendships/invites', { headers })
 }
 
-export function sendFriendRequest(friendId){
-  const headers =  __headers(true)
-  return axios.post(URL + '/friendships', { friendId }, {headers})
-}
-
-export function acceptInvite(friendshipId){
-  const headers =  __headers(true)
-  return axios.put(URL + '/friendships/' + friendshipId, {}, {headers})
-}
-
-export function cancelInvite(friendId){
+export function sendFriendRequest(friendId) {
   const headers = __headers(true)
-  return axios.delete(URL + '/friendships/invites/' + friendId, {headers})
+  return axios.post(URL + '/friendships', { friendId }, { headers })
 }
 
-export function deleteFriend(friendId){
+export function acceptInvite(friendshipId) {
   const headers = __headers(true)
-  return axios.delete(URL + '/friendships/' + friendId, {headers})
+  return axios.put(URL + '/friendships/' + friendshipId, {}, { headers })
+}
+
+export function cancelInvite(friendId) {
+  const headers = __headers(true)
+  return axios.delete(URL + '/friendships/invites/' + friendId, { headers })
+}
+
+export function deleteFriend(friendId) {
+  const headers = __headers(true)
+  return axios.delete(URL + '/friendships/' + friendId, { headers })
+}
+
+export function getReports() {
+  const headers = __headers(true)
+  return axios.get(URL + '/reports', { headers })
+}
+
+export function reportFriend(target) {
+  const headers = __headers(true)
+
+  return axios.post(URL + '/reports/', { target }, { headers })
+}
+
+export function banReportedUser(reportId) {
+  const headers = __headers(true)
+
+  return axios.post(`${URL}/reports/${reportId}/ban`, {}, { headers })
+}
+
+export function closeReport(reportId) {
+  const headers = __headers(true)
+
+  return axios.post(`${URL}/reports/${reportId}/close`, {}, { headers })
 }
 
 export function __health(baseUrl) {

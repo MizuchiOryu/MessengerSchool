@@ -1,10 +1,10 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("./db");
 const bcryptjs = require("bcryptjs");
-const { createTokenForVerifyToken} = require("../lib/jwt");
+const { createTokenForVerifyToken } = require("../lib/jwt");
 
 
-class User extends Model {}
+class User extends Model { }
 
 User.init(
   {
@@ -67,6 +67,12 @@ User.init(
       defaultValue: false,
       allowNull: false,
     },
+    isBanned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    
   },
   {
     sequelize,

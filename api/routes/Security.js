@@ -43,6 +43,7 @@ router.post("/login", async (req, res) => {
     const result = await User.findOne({
       where: {
         email: req.body.email,
+        isBanned:false,
       },
     });
     if (!result) {
